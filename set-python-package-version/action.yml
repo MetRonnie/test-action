@@ -25,7 +25,7 @@ runs:
       shell: bash
       run: |
         python3 -m pip install -q packaging
-        echo "::add-path::${{ github.action_path }}/bin"
+        echo "::add-path::${{ github.action_path }}/../bin"  # Note: this persists in the workflow after the action is called
 
     - name: Update version in __init__.py
       shell: bash
@@ -86,6 +86,6 @@ runs:
             {stdio: 'pipe', encoding: 'utf8'});
           console.log(diff);
           if (!diff) {
-            throw `${env.SETUP_PY_VERSION} already exists on PyPI.org`;
+            throw `::error:: ${env.SETUP_PY_VERSION} already exists on PyPI.org`;
           }
         }

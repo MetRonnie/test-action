@@ -2,16 +2,16 @@ name: Set Python package version
 description: Set and validate package version in __init__.py, and check it doesn't already exist on PyPI.org
 inputs:
   version:
-    description: 'PEP 440 compliant version number'
+    description: PEP 440 compliant version number
     required: true
   init-file:
-    description: 'Path to __init__.py'
+    description: Path to __init__.py
     required: true
   pypi-package-name:
-    description: 'Name of package on PyPI.org'
+    description: Name of package on PyPI.org
     required: true
   stage-changes:
-    description: 'Whether to stage the changes to __init__.py'
+    description: Whether to stage the changes to __init__.py
     required: false
     default: true
 # outputs:
@@ -56,35 +56,23 @@ runs:
         echo "setup.py version: ${setup_py_version}"
         echo "::set-output name=version::$setup_py_version"
 
-    - name: Get package info on PyPI.org
-      id: get-pypi-info
-      shell: bash
-      env:
-        PYPI_PACKAGE_NAME: ${{ inputs.pypi-package-name }}
-      run: |
-        cmd="curl -X GET \
-          https://pypi.org/pypi/${PYPI_PACKAGE_NAME}/json \
-          --silent --fail --show-error"
-        response=$( $cmd )
-        echo "::group::${cmd}"
-        echo "$response"
-        echo "::endgroup::"
-        echo "::set-output name=response::$response"
-
     - name: Check version doesn't already exist on PyPI.org
       shell: node {0}
+      working-directory: ${{ github.actions_path }}
       env:
         SETUP_PY_VERSION: ${{ steps.get-setup-py-version.outputs.version }}
-        PYPI_INFO: ${{ steps.get-pypi-info.outputs.response }}
       run: |
-        const {execSync} = require('child_process')
+        const {execSync, curlOpts} = require('action-utils')
         const {env} = process;
 
-        const {releases} = JSON.parse(env.PYPI_INFO);
+        const request = `curl -X GET \
+          https://pypi.org/pypi/${env.PYPI_PACKAGE_NAME}/json \
+          ${curlOpts}`
+        console.log('Checking releases on PyPI.org...')
+        const {releases} = JSON.parse(execSync(request));
         for (release in releases) {
-          const diff = execSync(`cmp_py_versions ${release} ${env.SETUP_PY_VERSION}`,
-            {stdio: 'pipe', encoding: 'utf8'});
-          console.log(diff);
+          console.log(`  ${release}`);
+          const diff = execSync(`cmp_py_versions ${release} ${env.SETUP_PY_VERSION}`);
           if (!diff) {
             throw `::error:: ${env.SETUP_PY_VERSION} already exists on PyPI.org`;
           }

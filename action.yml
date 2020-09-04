@@ -16,9 +16,8 @@ runs:
       shell: bash
     - run: pip install -q packaging
       shell: bash
-    - run: echo "::set-env name=GENNARO::coupon_day"
-      shell: bash
-    - run: echo "${{ github.action_path }}"
-      shell: bash
-    - run: echo "::add-path::${{ github.action_path }}/bin"
+    - run: |
+        echo "::set-env name=GENNARO::coupon_day"
+        echo "${{ github.action_path }}"
+        echo "::add-path::${{ github.action_path }}/bin"
       shell: bash

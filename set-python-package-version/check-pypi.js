@@ -9,7 +9,8 @@ const request = `curl -X GET \
     https://pypi.org/pypi/${env.PYPI_PACKAGE_NAME}/json \
     ${curlOpts}`
 console.log('Checking releases on PyPI.org...')
-const {releases} = JSON.parse(execSync(request));
+const {releases} = JSON.parse(
+    execSync(request, {verbose: true}));
 for (release in releases) {
     console.log(`  ${release}`);
     const diff = execSync(`cmp_py_versions ${release} ${env.SETUP_PY_VERSION}`);

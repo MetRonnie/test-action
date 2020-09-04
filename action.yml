@@ -1,0 +1,22 @@
+name: 'Install/setup utils'
+description: 'Seeing what can be done with composite-run-steps action'
+# inputs:
+#   who-to-greet:  # id of input
+#     description: 'Who to greet'
+#     required: true
+#     default: 'World'
+# outputs:
+#   random-number:
+#     description: "Random number"
+#     value: ${{ steps.random-number-generator.outputs.random-id }}
+runs:
+  using: "composite"
+  steps:
+    - run: echo "$PWD"
+      shell: bash
+    - run: pip install -q packaging
+      shell: bash
+    # - run: echo "::add-path::${{ github.workspace }}/.github/bin"
+    #   shell: bash
+    - run: echo "::set-env name=GENNARO::coupon_day"
+      shell: bash

@@ -57,23 +57,9 @@ runs:
         echo "::set-output name=version::$setup_py_version"
 
     - name: Check version doesn't already exist on PyPI.org
-      shell: node {0}
-      working-directory: ${{ github.actions_path }}
+      shell: bash
+      working-directory: ${{ github.action_path }}
       env:
+        PYPI_PACKAGE_NAME: ${{ inputs.pypi-package-name }}
         SETUP_PY_VERSION: ${{ steps.get-setup-py-version.outputs.version }}
-      run: |
-        const {execSync, curlOpts} = require('action-utils')
-        const {env} = process;
-
-        const request = `curl -X GET \
-          https://pypi.org/pypi/${env.PYPI_PACKAGE_NAME}/json \
-          ${curlOpts}`
-        console.log('Checking releases on PyPI.org...')
-        const {releases} = JSON.parse(execSync(request));
-        for (release in releases) {
-          console.log(`  ${release}`);
-          const diff = execSync(`cmp_py_versions ${release} ${env.SETUP_PY_VERSION}`);
-          if (!diff) {
-            throw `::error:: ${env.SETUP_PY_VERSION} already exists on PyPI.org`;
-          }
-        }
+      run: node check-pypi.js

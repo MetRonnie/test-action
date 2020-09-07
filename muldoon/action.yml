@@ -3,5 +3,5 @@ description: We're being hunted
 runs:
   using: node12
   main: index.js
-  post-if: always() && steps.sattler.outcome != 'success'
+  post-if: always() && steps.muldoon.outcome != 'success'
   post: kirby.js

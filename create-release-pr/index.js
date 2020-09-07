@@ -1,6 +1,6 @@
 const {env} = process;
 const {readFileSync} = require('fs');
-const {execSync, stringify, curlOpts} = require('actions-utils');
+const {execSync, stringify, curlOpts} = require('action-utils');
 // Note: all string properties of the `github` context are available as env vars as `GITHUB_<PROPERTY>`
 // WARNING: Don't use ${env.GITHUB_TOKEN} in execSync() as that might print in log. Use `$GITHUB_TOKEN` instead.
 
@@ -33,7 +33,7 @@ This PR was created by the \`${env.GITHUB_WORKFLOW}\` workflow, triggered by @${
 
 #### Tests:
 ✔️ \`setup.py\` bdist build test
-✔️ Version number valid and greater than current PyPI release
+✔️ Version number valid and doesn't already exist on PYPI.org
 
 #### Checklist:
 - ${milestoneText()}
@@ -67,9 +67,7 @@ const request = `curl -X POST \
     --data '${stringify(payload)}' \
     ${curlOpts}`;
 
-const pr = JSON.parse(
-    execSync(request, {verbose: true})
-);
+const pr = JSON.parse(execSync(request));
 setMilestoneAndAssignee(pr.number);
 
 
@@ -82,9 +80,7 @@ function getMilestone() {
 
     let response;
     try {
-        response = JSON.parse(
-            execSync(request, {verbose: true})
-        );
+        response = JSON.parse(execSync(request));
     } catch (err) {
         console.log(`::warning:: Error getting milestones`);
         console.log(err, '\n');
@@ -112,5 +108,5 @@ function setMilestoneAndAssignee(prNumber) {
         -H "content-type: application/json" \
         --data '${stringify(payload)}' \
         ${curlOpts}`
-    execSync(request, {verbose: true});
+    execSync(request);
 }

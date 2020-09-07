@@ -1,3 +1,5 @@
 const {execSync} = require('action-utils');
 
-execSync('bash --noprofile --norc -eo pipefail delete-branch.sh', {verbose: true})
+console.log(process.env.GITHUB_ACTION_PATH);
+
+execSync('delete-branch', {verbose: true});

@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
 cd "$GITHUB_WORKSPACE"
 backup_sha=$( git rev-parse "origin/${HEAD_REF}" )
 git push -d origin "$HEAD_REF"

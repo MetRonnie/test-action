@@ -1,0 +1,20 @@
+name: Create pull request
+description: Creates branch named "prepare-<version>". Also sets GitHub Actions bot as author.
+# inputs:
+  # pr-branch-prefix:
+  #   description: Set this to override the default branch name prefix "prepare-"
+  #   required: false
+  #   default: 'prepare-'
+  # version:
+  #   description: Version number of the release (or you can set this to any string)
+  #   required: true
+# outputs:
+#   random-number:
+#     description: "Random number"
+#     value: ${{ steps.random-number-generator.outputs.random-id }}
+runs:
+  using: node12
+  main: index.js
+  # Use outcome of push step from main workflow:
+  post-if: always() && ! success() && steps.push.outcome == 'success'
+  post: delete-branch.js  # On fail: delete PR branch on origin, if it was pushed

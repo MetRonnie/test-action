@@ -9,9 +9,12 @@ inputs:
     description: Whether to stage the changes in git
     required: false
     default: true
-outputs:
-  date:
-    value: ${{ steps.main.outputs.date }}
+## outputs:
+##   date:
+##     value: ${{ steps.main.outputs.date }}
+# outputs:
+  # env:
+    # CHANGELOG_DATE
 runs:
   using: "composite"
   steps:
@@ -34,4 +37,4 @@ runs:
           git add "$CHANGELOG_FILE"
         fi
 
-        echo "::set-output name=date::$date_now"
+        echo "::set-env name=CHANGELOG_DATE::$date_now"

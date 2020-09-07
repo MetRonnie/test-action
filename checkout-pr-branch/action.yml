@@ -1,0 +1,35 @@
+name: Create & checkout PR branch
+description: Creates branch named "prepare-<version>". Also sets GitHub Actions bot as author.
+inputs:
+  pr-branch-prefix:
+    description: Set this to override the default branch name prefix "prepare-"
+    required: false
+    default: 'prepare-'
+  version:
+    description: Version number of the release (or you can set this to any string)
+    required: true
+# outputs:
+#   random-number:
+#     description: "Random number"
+#     value: ${{ steps.random-number-generator.outputs.random-id }}
+runs:
+  using: "composite"
+  steps:
+    - name: Configure git
+      shell: bash
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+        git config push.default current
+
+    - name: Create & checkout PR branch
+      shell: bash
+      env:
+        BRANCH_PREFIX: ${{ inputs.pr-branch-prefix }}
+        VERSION: ${{ inputs.version }}
+      run: |
+        HEAD_REF="${BRANCH_PREFIX}${VERSION}"
+        git checkout -b "$HEAD_REF"
+
+        echo "::set-env name=HEAD_REF::$HEAD_REF"

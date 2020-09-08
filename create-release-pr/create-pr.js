@@ -66,7 +66,7 @@ const request = `curl -X POST \
     ${curlOpts}`;
 
 const pr = JSON.parse(execSync(request));
-setMilestoneAndAssignee(pr.number);
+setMilestone_Assignee_Label(pr.number);
 
 
 
@@ -94,12 +94,14 @@ function getMilestone() {
     return;
 }
 
-function setMilestoneAndAssignee(prNumber) {
+function setMilestone_Assignee_Label(prNumber) {
     // Cannot set them when creating the PR unfortunately
     const payload = {
         milestone: milestone ? milestone.number : undefined,
-        assignees: [author]
-    };
+        assignees: [author],
+        labels: env.PR_LABEL ? [env.PR_LABEL] : undefined
+    }; // stringify() removes undefined properties
+
     const request = `curl -X PATCH \
         https://api.github.com/repos/${env.GITHUB_REPOSITORY}/issues/${prNumber} \
         -H "authorization: Bearer $GITHUB_TOKEN" \

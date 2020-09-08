@@ -3,11 +3,15 @@ description: Create the release PR
 # NOTE: Needs GITHUB_TOKEN env variable (and HEAD_REF)
 
 inputs:
+  pr-label:
+    description: The label to add to the PR
+    required: false
+    default: 'release'
   message:
     description: Commit message
     required: false
     default: 'Prepare release ${VERSION}'
-  all:
+  commit-all:
     description: If true, stage all files before comitting
     required: false
     default: false
@@ -24,7 +28,7 @@ runs:
     - name: Commit & push
       shell: bash
       run: |
-        if ${{ inputs.all }}; then
+        if ${{ inputs.commit-all }}; then
           git add --all
         fi
 
@@ -39,6 +43,8 @@ runs:
       shell: bash --noprofile --norc {0}
       # Note: not `-eo pipefail` as we need last step to run if this step fails
       working-directory: ${{ github.action_path }}
+      env:
+        PR_LABEL: ${{ inputs.pr-label }}
       run: |
         node create-pr.js
 

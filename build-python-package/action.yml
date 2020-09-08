@@ -5,10 +5,6 @@ inputs:
     description: If true, merely test the build process in a temporary directory
     required: false
     default: false
-# outputs:
-#   random-number:
-#     description: "Random number"
-#     value: ${{ steps.random-number-generator.outputs.random-id }}
 runs:
   using: "composite"
   steps:

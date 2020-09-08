@@ -6,10 +6,6 @@ description: Create the release PR
 #   registry:
 #     description: What package registry to print in the PR if publishing package, e.g. 'PyPI' (this input does not )
 #     required: false
-# outputs:
-#   random-number:
-#     description: "Random number"
-#     value: ${{ steps.random-number-generator.outputs.random-id }}
 runs:
   using: node12
   main: index.js

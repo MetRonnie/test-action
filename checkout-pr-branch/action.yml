@@ -1,17 +1,15 @@
 name: Create & checkout PR branch
 description: Creates branch named "prepare-<version>". Also sets GitHub Actions bot as author.
 inputs:
-  pr-branch-prefix:
+  prefix:
     description: Set this to override the default branch name prefix "prepare-"
     required: false
     default: 'prepare-'
   version:
-    description: Version number of the release (or you can set this to any string)
-    required: true
-# outputs:
-#   random-number:
-#     description: "Random number"
-#     value: ${{ steps.random-number-generator.outputs.random-id }}
+    description: Version number of the release. If this is not set, will use the env var VERSION instead.
+    required: false
+# env outputs:
+  # HEAD_REF: The PR branch name
 runs:
   using: "composite"
   steps:
@@ -26,9 +24,16 @@ runs:
     - name: Create & checkout PR branch
       shell: bash
       env:
-        BRANCH_PREFIX: ${{ inputs.pr-branch-prefix }}
-        VERSION: ${{ inputs.version }}
+        BRANCH_PREFIX: ${{ inputs.prefix }}
       run: |
+        if [[ "$INPUT_VERSION" ]]; then
+          VERSION=$INPUT_VERSION
+        fi
+        if [[ -z "$VERSION" ]]; then
+          echo "::error:: No version number supplied"
+          exit 1
+        fi
+
         HEAD_REF="${BRANCH_PREFIX}${VERSION}"
         git checkout -b "$HEAD_REF"
 

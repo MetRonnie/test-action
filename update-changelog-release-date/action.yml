@@ -9,12 +9,8 @@ inputs:
     description: Whether to stage the changes in git
     required: false
     default: true
-## outputs:
-##   date:
-##     value: ${{ steps.main.outputs.date }}
-# outputs:
-  # env:
-    # CHANGELOG_DATE
+# env outputs:
+  # CHANGELOG_DATE
 runs:
   using: "composite"
   steps:

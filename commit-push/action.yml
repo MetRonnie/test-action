@@ -13,27 +13,19 @@ inputs:
     description: If false, do not push changes
     required: false
     default: true
-  quiet:
-    description: If true, do not print git status
-    required: false
-    default: false
-# outputs:
-#   random-number:
-#     description: "Random number"
-#     value: ${{ steps.random-number-generator.outputs.random-id }}
 runs:
   using: "composite"
   steps:
     - shell: bash
       run: |
-        if "${{ inputs.all }}"; then
+        if ${{ inputs.all }}; then
           git add --all
         fi
-        if ! "${{ inputs.quiet }}"; then
-          git status
-        fi
+
+        git status
+
         git commit -m "${{ inputs.message }}" -m "Workflow: ${{ github.workflow}}, run: ${{ github.run_number }}"
-        if "${{ inputs.push }}"; then
+        if ${{ inputs.push }}; then
           git push
         fi
 

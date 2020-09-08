@@ -2,8 +2,8 @@ name: Set Python package version
 description: Set and validate package version in __init__.py, and check it doesn't already exist on PyPI.org
 inputs:
   version:
-    description: PEP 440 compliant version number
-    required: true
+    description: PEP 440 compliant version number of the release. If this is not set, will use the env var VERSION instead.
+    required: false
   init-file:
     description: Path to __init__.py
     required: true
@@ -14,10 +14,10 @@ inputs:
     description: Whether to stage the changes to __init__.py
     required: false
     default: true
-# outputs:
-#   random-number:
-#     description: "Random number"
-#     value: ${{ steps.random-number-generator.outputs.random-id }}
+outputs:
+  setup-py-version:
+    description: Version number as outputted by setup.py (might be different from __init__.py, e.g. if epoch prefixed)
+    value: ${{ steps.get-setup-py-version.outputs.version }}
 runs:
   using: "composite"
   steps:
@@ -30,9 +30,16 @@ runs:
     - name: Update version in __init__.py
       shell: bash
       env:
-        VERSION: ${{ inputs.version }}
         INIT_FILE: ${{ inputs.init-file }}
       run: |
+        if [[ "$INPUT_VERSION" ]]; then
+          VERSION=$INPUT_VERSION
+        fi
+        if [[ -z "$VERSION" ]]; then
+          echo "::error:: No version number supplied"
+          exit 1
+        fi
+
         pattern="(__version__ ?= ?['\"]).*(['\"])"
         sed -i -E "s/${pattern}/\1${VERSION}\2/" "$INIT_FILE"
 

@@ -1,10 +1,14 @@
 name: Commit and push
-description: Set and validate package version in __init__.py, and check it doesn't already exist on PyPI.org
+description: Commit (staged files only by default) and push
 inputs:
-  subject:
-    description: First line of commit message
+  message:
+    description: Commit message
     required: false
     default: 'Prepare release ${VERSION}'
+  all:
+    description: If true, stage all files before comitting
+    required: false
+    default: false
   push:
     description: If false, do not push changes
     required: false
@@ -21,15 +25,15 @@ runs:
   using: "composite"
   steps:
     - shell: bash
-      env:
-        QUIET: ${{ inputs.quiet }}
-        PUSH_CHANGES: ${{ inputs.push }}
       run: |
-        if ! "$QUIET"; then
+        if "${{ inputs.all }}"; then
+          git add --all
+        fi
+        if ! "${{ inputs.quiet }}"; then
           git status
         fi
-        git commit -m "Prepare release ${VERSION}" -m "Workflow: ${{ github.workflow}}, run: ${{ github.run_number }}"
-        if "$PUSH_CHANGES"; then
+        git commit -m "${{ inputs.message }}" -m "Workflow: ${{ github.workflow}}, run: ${{ github.run_number }}"
+        if "${{ inputs.push }}"; then
           git push
         fi
 

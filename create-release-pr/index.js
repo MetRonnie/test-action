@@ -4,9 +4,8 @@ const {execSync, stringify, curlOpts} = require('action-utils');
 // Note: all string properties of the `github` context are available as env vars as `GITHUB_<PROPERTY>`
 // WARNING: Don't use ${env.GITHUB_TOKEN} in execSync() as that might print in log. Use `$GITHUB_TOKEN` instead.
 
-
 if (!env.VERSION) {
-    throw `::error:: env.VERSION not set`;
+    throw "::error:: Environment variable `VERSION` not set";
 }
 
 const github_event = JSON.parse(readFileSync(env.GITHUB_EVENT_PATH));
@@ -21,19 +20,18 @@ const milestoneText = () => {
         if (parseInt(milestone.open_issues) === 0) {
             checkbox = "[x]";
         }
-        note = `\`${milestone.open_issues}\` other open issues/PRs on [milestone ${milestone.title}](https://github.com/${env.REPOSITORY}/milestone/${milestone.number}) at time of PR creation`;
+        note = `\`${milestone.open_issues}\` other open issues/PRs on [milestone ${milestone.title}](https://github.com/${env.GITHUB_REPOSITORY}/milestone/${milestone.number}) at time of PR creation`;
     }
     return `${checkbox} Milestone complete?\n  ${note}`;
 };
 
 const bodyText = `
-### ⚡ Merging this PR will automatically create a GitHub Release & publish to PyPI ⚡
+### ⚡ Merging this PR will automatically create a GitHub Release & publish the package ⚡
 
 This PR was created by the \`${env.GITHUB_WORKFLOW}\` workflow, triggered by @${author}
 
 #### Tests:
-✔️ \`setup.py\` bdist build test
-✔️ Version number valid and doesn't already exist on PYPI.org
+✔️ Passed - see the [workflow run](https://github.com/${env.GITHUB_REPOSITORY}/actions?query=workflow%3A%22${encodeURIComponent(env.GITHUB_WORKFLOW)}%22) (number ${env.GITHUB_RUN_NUMBER}) for more info
 
 #### Checklist:
 - ${milestoneText()}

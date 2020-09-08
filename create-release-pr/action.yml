@@ -1,13 +1,11 @@
 name: Create pull request
-description: Creates branch named "prepare-<version>". Also sets GitHub Actions bot as author.
+description: Create the release PR
+# NOTE: Needs GITHUB_TOKEN env variable
+
 # inputs:
-  # pr-branch-prefix:
-  #   description: Set this to override the default branch name prefix "prepare-"
-  #   required: false
-  #   default: 'prepare-'
-  # version:
-  #   description: Version number of the release (or you can set this to any string)
-  #   required: true
+#   registry:
+#     description: What package registry to print in the PR if publishing package, e.g. 'PyPI' (this input does not )
+#     required: false
 # outputs:
 #   random-number:
 #     description: "Random number"

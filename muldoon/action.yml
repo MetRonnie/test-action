@@ -1,7 +1,12 @@
 name: Robert Muldoon
 description: We're being hunted
+inputs:
+  foo:
+    description: Must go faster!
+    required: true
+    default: ${{ env.FOO }}
 runs:
-  using: node12
-  main: index.js
-  post-if: always() && steps.muldoon.outcome != 'success'
-  post: kirby.js
+  using: composite
+  steps:
+    - shell: bash
+      run: echo "$FOO"

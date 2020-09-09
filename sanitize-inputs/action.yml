@@ -13,7 +13,7 @@ runs:
       env:
         VERSION: ${{ github.event.inputs.version }}
         BRANCH: ${{ github.event.inputs.branch }}
-      run:
+      run: |
         const versionStr = process.env.VERSION.trim();
         console.log(`::set-env name=VERSION::${versionStr}`);
         const branchStr = process.env.BRANCH.trim();
